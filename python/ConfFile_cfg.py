@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.StandardSequences.Eras import eras
-process = cms.Process('HcalDigiAnalyzer',eras.Run2_2018)
+process = cms.Process('Hcal4DQMAnalyzer',eras.Run2_2018)
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.StandardSequences.Services_cff')
@@ -40,7 +40,7 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag.globaltag = '101X_dataRun2_v8'
 
 
-process.HcalDigiAnalyzer = cms.EDAnalyzer('HcalDigiAnalyzer',
+process.Hcal4DQMAnalyzer = cms.EDAnalyzer('Hcal4DQMAnalyzer',
 	tagQIE11 = cms.untracked.InputTag("hcalDigis"),
 )
 
@@ -54,7 +54,7 @@ process.p = cms.Path(
 	process.bunchSpacingProducer*
         process.hcalDigis*
 #	process.hcalLocalRecoSequence*
-	process.HcalDigiAnalyzer
+	process.Hcal4DQMAnalyzer
 )
 
 #process.outpath = cms.EndPath(process.out)

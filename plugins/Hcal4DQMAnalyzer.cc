@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    HcalDigiAnalyzer/HcalDigiAnalyzer
-// Class:      HcalDigiAnalyzer
+// Package:    Hcal4DQMAnalyzer/Hcal4DQMAnalyzer
+// Class:      Hcal4DQMAnalyzer
 //
-/**\class HcalDigiAnalyzer HcalDigiAnalyzer.cc HcalDigiAnalyzer/HcalDigiAnalyzer/plugins/HcalDigiAnalyzer.cc
+/**\class Hcal4DQMAnalyzer Hcal4DQMAnalyzer.cc Hcal4DQMAnalyzer/Hcal4DQMAnalyzer/plugins/Hcal4DQMAnalyzer.cc
 
  Description: [one line class summary]
 
@@ -67,10 +67,10 @@
 // This will improve performance in multithreaded jobs.
 
 
-class HcalDigiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class Hcal4DQMAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
    public:
-      explicit HcalDigiAnalyzer(const edm::ParameterSet&);
-      ~HcalDigiAnalyzer();
+      explicit Hcal4DQMAnalyzer(const edm::ParameterSet&);
+      ~Hcal4DQMAnalyzer();
 
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -85,6 +85,9 @@ class HcalDigiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources> 
 
       TH3I* hist3D;
 
+      TTree* evttree;
+      int RunNum;
+      int LumiSec;
 };
 
 //
@@ -98,7 +101,7 @@ class HcalDigiAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources> 
 //
 // constructors and destructor
 //
-HcalDigiAnalyzer::HcalDigiAnalyzer(const edm::ParameterSet& iConfig)
+Hcal4DQMAnalyzer::Hcal4DQMAnalyzer(const edm::ParameterSet& iConfig)
  :
   qie11digisToken_(consumes<QIE11DigiCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tagQIE11", edm::InputTag("hcalDigis"))))
 {
@@ -107,11 +110,14 @@ HcalDigiAnalyzer::HcalDigiAnalyzer(const edm::ParameterSet& iConfig)
    edm::Service<TFileService> fs;
 
    hist3D = fs->make<TH3I>("hist3D", "hist3D", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   evttree = fs->make<TTree>("evttree", "evttree");
+   evttree->Branch("RunNum", &RunNum);
+   evttree->Branch("LumiSec", &LumiSec);
 
 }
 
 
-HcalDigiAnalyzer::~HcalDigiAnalyzer()
+Hcal4DQMAnalyzer::~Hcal4DQMAnalyzer()
 {
 
    // do anything here that needs to be done at desctruction time
@@ -126,7 +132,7 @@ HcalDigiAnalyzer::~HcalDigiAnalyzer()
 
 // ------------ method called for each event  ------------
 void
-HcalDigiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+Hcal4DQMAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
 
@@ -172,25 +178,28 @@ HcalDigiAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       hist3D->Fill(lumiid, did.ieta(), did.iphi());
   }
 
+  RunNum = runid;
+  LumiSec = lumiid;
+  evttree->Fill();
 
 }
 
 
 // ------------ method called once each job just before starting event loop  ------------
 void
-HcalDigiAnalyzer::beginJob()
+Hcal4DQMAnalyzer::beginJob()
 {
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
 void
-HcalDigiAnalyzer::endJob()
+Hcal4DQMAnalyzer::endJob()
 {
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-HcalDigiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+Hcal4DQMAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -205,4 +214,4 @@ HcalDigiAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions)
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(HcalDigiAnalyzer);
+DEFINE_FWK_MODULE(Hcal4DQMAnalyzer);
