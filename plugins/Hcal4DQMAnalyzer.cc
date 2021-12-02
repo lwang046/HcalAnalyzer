@@ -83,7 +83,13 @@ class Hcal4DQMAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources> 
       // ----------member data ---------------------------
       edm::EDGetTokenT<QIE11DigiCollection> qie11digisToken_;
 
-      TH3I* hist3D;
+      TH3I* hist3D_depth1;
+      TH3I* hist3D_depth2;
+      TH3I* hist3D_depth3;
+      TH3I* hist3D_depth4;
+      TH3I* hist3D_depth5;
+      TH3I* hist3D_depth6;
+      TH3I* hist3D_depth7;
 
       TTree* evttree;
       int RunNum;
@@ -109,7 +115,13 @@ Hcal4DQMAnalyzer::Hcal4DQMAnalyzer(const edm::ParameterSet& iConfig)
    usesResource("TFileService");
    edm::Service<TFileService> fs;
 
-   hist3D = fs->make<TH3I>("hist3D", "hist3D", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth1 = fs->make<TH3I>("hist3D_depth1", "hist3D_depth1", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth2 = fs->make<TH3I>("hist3D_depth2", "hist3D_depth2", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth3 = fs->make<TH3I>("hist3D_depth3", "hist3D_depth3", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth4 = fs->make<TH3I>("hist3D_depth4", "hist3D_depth4", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth5 = fs->make<TH3I>("hist3D_depth5", "hist3D_depth5", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth6 = fs->make<TH3I>("hist3D_depth6", "hist3D_depth6", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth7 = fs->make<TH3I>("hist3D_depth7", "hist3D_depth7", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
    evttree = fs->make<TTree>("evttree", "evttree");
    evttree->Branch("RunNum", &RunNum);
    evttree->Branch("LumiSec", &LumiSec);
@@ -162,7 +174,6 @@ Hcal4DQMAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     const QIE11DataFrame digi = static_cast<const QIE11DataFrame>(*it);
 
     HcalDetId const& did = digi.detid();
-    //if(did.subdet() != HcalEndcap) continue;
 
     const HcalQIECoder* channelCoder = conditions -> getHcalCoder(did);
     const HcalQIEShape* shape = conditions -> getHcalShape(channelCoder);
@@ -174,8 +185,15 @@ Hcal4DQMAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
       charge_ += cs[i];
     }
 
-    if(charge_>500)
-      hist3D->Fill(lumiid, did.ieta(), did.iphi());
+    if(charge_>20){
+      if(did.depth()==1) hist3D_depth1->Fill(lumiid, did.ieta(), did.iphi());
+      if(did.depth()==2) hist3D_depth2->Fill(lumiid, did.ieta(), did.iphi());
+      if(did.depth()==3) hist3D_depth3->Fill(lumiid, did.ieta(), did.iphi());
+      if(did.depth()==4) hist3D_depth4->Fill(lumiid, did.ieta(), did.iphi());
+      if(did.depth()==5) hist3D_depth5->Fill(lumiid, did.ieta(), did.iphi());
+      if(did.depth()==6) hist3D_depth6->Fill(lumiid, did.ieta(), did.iphi());
+      if(did.depth()==7) hist3D_depth7->Fill(lumiid, did.ieta(), did.iphi());
+    }
   }
 
   RunNum = runid;
