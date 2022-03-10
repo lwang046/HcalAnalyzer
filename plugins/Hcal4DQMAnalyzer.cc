@@ -115,13 +115,13 @@ Hcal4DQMAnalyzer::Hcal4DQMAnalyzer(const edm::ParameterSet& iConfig)
    usesResource("TFileService");
    edm::Service<TFileService> fs;
 
-   hist3D_depth1 = fs->make<TH3I>("hist3D_depth1", "hist3D_depth1", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
-   hist3D_depth2 = fs->make<TH3I>("hist3D_depth2", "hist3D_depth2", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
-   hist3D_depth3 = fs->make<TH3I>("hist3D_depth3", "hist3D_depth3", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
-   hist3D_depth4 = fs->make<TH3I>("hist3D_depth4", "hist3D_depth4", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
-   hist3D_depth5 = fs->make<TH3I>("hist3D_depth5", "hist3D_depth5", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
-   hist3D_depth6 = fs->make<TH3I>("hist3D_depth6", "hist3D_depth6", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
-   hist3D_depth7 = fs->make<TH3I>("hist3D_depth7", "hist3D_depth7", 1000, 0, 1000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth1 = fs->make<TH3I>("hist3D_depth1", "hist3D_depth1", 2000, 0, 2000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth2 = fs->make<TH3I>("hist3D_depth2", "hist3D_depth2", 2000, 0, 2000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth3 = fs->make<TH3I>("hist3D_depth3", "hist3D_depth3", 2000, 0, 2000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth4 = fs->make<TH3I>("hist3D_depth4", "hist3D_depth4", 2000, 0, 2000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth5 = fs->make<TH3I>("hist3D_depth5", "hist3D_depth5", 2000, 0, 2000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth6 = fs->make<TH3I>("hist3D_depth6", "hist3D_depth6", 2000, 0, 2000, 64, -32, 32, 72, 0, 72);
+   hist3D_depth7 = fs->make<TH3I>("hist3D_depth7", "hist3D_depth7", 2000, 0, 2000, 64, -32, 32, 72, 0, 72);
    evttree = fs->make<TTree>("evttree", "evttree");
    evttree->Branch("RunNum", &RunNum);
    evttree->Branch("LumiSec", &LumiSec);
@@ -174,6 +174,8 @@ Hcal4DQMAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     const QIE11DataFrame digi = static_cast<const QIE11DataFrame>(*it);
 
     HcalDetId const& did = digi.detid();
+
+    if(did.subdet() != HcalEndcap) continue;
 
     const HcalQIECoder* channelCoder = conditions -> getHcalCoder(did);
     const HcalQIEShape* shape = conditions -> getHcalShape(channelCoder);

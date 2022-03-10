@@ -6,8 +6,8 @@ process = cms.Process('Hcal4DQMAnalyzer',eras.Run2_2018)
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.StandardSequences.Services_cff')
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 
 process.load('Configuration.EventContent.EventContent_cff')
 process.load("Configuration.StandardSequences.GeometryDB_cff")
@@ -32,7 +32,8 @@ process.options = cms.untracked.PSet(
 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.autoCond import autoCond
-process.GlobalTag.globaltag = '101X_dataRun2_v8'
+process.GlobalTag.globaltag = '106X_dataRun2_v35'
+
 
 
 process.Hcal4DQMAnalyzer = cms.EDAnalyzer('Hcal4DQMAnalyzer',
