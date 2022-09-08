@@ -82,6 +82,8 @@ class Hcal4DQMAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources> 
 
       // ----------member data ---------------------------
       edm::EDGetTokenT<QIE11DigiCollection> qie11digisToken_;
+      edm::ESGetToken<HcalDbService, HcalDbRecord> hcalDbServiceToken_;
+      const HcalDbService* conditions;
 
       TH3I* hist3D_depth1;
       TH3I* hist3D_depth2;
@@ -112,6 +114,8 @@ Hcal4DQMAnalyzer::Hcal4DQMAnalyzer(const edm::ParameterSet& iConfig)
   qie11digisToken_(consumes<QIE11DigiCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tagQIE11", edm::InputTag("hcalDigis"))))
 {
    //now do what ever initialization is needed
+   hcalDbServiceToken_ = esConsumes<HcalDbService, HcalDbRecord>();
+
    usesResource("TFileService");
    edm::Service<TFileService> fs;
 
@@ -146,24 +150,13 @@ Hcal4DQMAnalyzer::~Hcal4DQMAnalyzer()
 void
 Hcal4DQMAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-   using namespace edm;
-
-#ifdef THIS_IS_AN_EVENT_EXAMPLE
-   Handle<ExampleData> pIn;
-   iEvent.getByLabel("example",pIn);
-#endif
-
-#ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
-   ESHandle<SetupData> pSetup;
-   iSetup.get<SetupRecord>().get(pSetup);
-#endif
+  using namespace edm;
 
   long runid   = iEvent.id().run();
   long eventid = iEvent.id().event();
   long lumiid  = iEvent.id().luminosityBlock();
 
-  edm::ESHandle<HcalDbService> conditions;
-  iSetup.get<HcalDbRecord>().get(conditions);
+  conditions = &iSetup.getData(hcalDbServiceToken_);
 
   edm::Handle<QIE11DigiCollection> qie11Digis;
   bool gotQIE11Digis = iEvent.getByToken(qie11digisToken_, qie11Digis);
@@ -175,7 +168,7 @@ Hcal4DQMAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
 
     HcalDetId const& did = digi.detid();
 
-    if(did.subdet() != HcalEndcap) continue;
+    if(did.subdet() != HcalEndcap && did.subdet() != HcalBarrel) continue;
 
     const HcalQIECoder* channelCoder = conditions -> getHcalCoder(did);
     const HcalQIEShape* shape = conditions -> getHcalShape(channelCoder);
