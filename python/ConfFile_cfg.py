@@ -6,8 +6,8 @@ process = cms.Process('Hcal4DQMAnalyzer',eras.Run3)
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.StandardSequences.Services_cff')
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 
 process.load('Configuration.EventContent.EventContent_cff')
 process.load("Configuration.StandardSequences.GeometryDB_cff")
